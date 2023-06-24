@@ -3,7 +3,7 @@ import generarJWT from "../helpers/generarJWT.js";
 import generarId from "../helpers/generarId.js";
 import emailRegistro from "../helpers/emailRegistro.js";
 import emailOlvidePassword from "../helpers/emailOlvidePassword.js";
-let cont = 0;   //let cont = 0;   
+
 const registrar = async (req, res) => {
   const { email, nombre } = req.body;
 
@@ -39,25 +39,23 @@ const perfil = (req, res) => {
 
 const confirmar = async (req, res) => {
   const { token } = req.params;
+
   const usuarioConfirmar = await Veterinario.findOne({ token });
-  cont += 1;  //cont += 1;
-  if (!usuarioConfirmar && cont!=3) {   //&& cont!=3
+
+  if (!usuarioConfirmar) {
     const error = new Error("Token no válido");
-    cont = 0;   //cont = 0;
     return res.status(404).json({ msg: error.message });
   }
+
   try {
     usuarioConfirmar.token = null;
     usuarioConfirmar.confirmado = true;
     await usuarioConfirmar.save();
+
     res.json({ msg: "Usuario Confirmado Correctamente" });
-    cont += 1;  //cont += 1;
-    }   
-  catch (error) {
+  } catch (error) {
     console.log(error);
   }
-
-  
 };
 
 const autenticar = async (req, res) => {
@@ -214,4 +212,4 @@ export {
   nuevoPassword,
   actualizarPerfil,
   actualizarPassword,
-};            //formato para exportar multiples funciones
+};
